@@ -1,0 +1,23 @@
+<launch>
+    <!-- Set Coqui TTS server url -->
+    <arg name="url"         default="http://localhost:5002"/>
+    <!-- Add period at the end of a sentence (true) -->
+    <arg name="addStopChar" default="true"/>
+    <!-- Set result sound filename -->
+    <arg name="filename"    default="output.wav"/>
+    <!-- Set input style_wav if sample voice is given -->
+    <arg name="style_wav"   default=""/>
+    <!-- Set Speaker ID if multi-speaker model is being used -->
+    <arg name="speaker_id"  default="p225"/>
+    <!-- Set Language if multi-language model is being used -->
+    <arg name="language_id" default=""/>
+
+    <node pkg="coqui_tts_ros" type="tts.py" name="coqui_tts_ros" output="screen">
+        <param name="url"         type="str"  value="$(arg url)"/>
+        <param name="addStopChar" type="bool" value="$(arg addStopChar)"/>
+        <param name="filename"    type="str"  value="$(arg filename)"/>
+        <param name="speaker_id"  type="str"  value="$(arg speaker_id)"/>
+        <param name="language_id" type="str"  value="$(arg language_id)"/>
+    </node>
+
+</launch>
