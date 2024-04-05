@@ -11,6 +11,9 @@
     <arg name="speaker_id"  default="p225"/>
     <!-- Set Language if multi-language model is being used -->
     <arg name="language_id" default=""/>
+    <!-- Set sound_audio to true if you want to play the sound -->
+    <arg name="sound_audio" default="true"/>
+    
 
     <node pkg="coqui_tts_ros" type="tts.py" name="coqui_tts_ros" output="screen">
         <param name="url"         type="str"  value="$(arg url)"/>
