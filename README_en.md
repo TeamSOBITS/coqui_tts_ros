@@ -36,12 +36,8 @@
 <!-- INTRODUCTION -->
 ## Introduction
 
-This repository is a fork of the [coqui-ai/TTS](https://github.com/coqui-ai/TTS) which provides a library for advanced Text-to-Speech generation.
+This repository allows the connection of [coqui-ai/TTS](https://github.com/coqui-ai/TTS) with ROS, providing a real-time advanced Text-to-Speech generation.
 The latest `TTSv2` provides of 16 languages and better performance overall.
-
-> [!NOTE]
-> This repository is intended to be used inside a Docker container.
-Changes in the local enviroment may occur.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -69,26 +65,31 @@ First, please set up the following environment before proceeding to the next ins
 
 ### Installation
 
-1. Clone this repository.
+1. Go to the `src` folder of ROS.
+   ```sh
+   $ roscd
+   # Or just use "cd ~/catkin_ws/" and change directory.
+   $ cd src/
+   ```
+2. Clone this repository.
     ```sh
     $ git clone https://github.com/TeamSOBITS/coqui_tts_ros
     ```
-2. Navigate into the repository.
+3. Navigate into the repository.
     ```sh
     $ cd coqui_tts_ros/
     ```
-3. Install the dependent packages.
+4. Install the dependent packages.
     ```sh
     $ bash install.sh
     ```
-4. Compile the package.
+5. Compile the package.
     ```sh
     $ roscd
     # Or just use "cd ~/catkin_ws/" and change directory.
     $ catkin_make
     ```
-
-5. Create a simple alias to launch the TTS server.
+6. Create a simple alias to launch the TTS server.
     - If using **CPU**:
     ```sh
     $ echo "alias tts_launch='docker run --rm -it -p 5002:5002 -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts-cpu'" >> ~/.bash_alias
@@ -101,7 +102,7 @@ First, please set up the following environment before proceeding to the next ins
 > `{PATH_ROS_WS_LOCAL}` needs to be updated to your ROS PATH in the **local environment**.
 
 > [!IMPORTANT]
-> You need to run the command 5. in the **local environment**.
+> You need to run the command 6. in the **local environment**.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -121,9 +122,6 @@ First, please set up the following environment before proceeding to the next ins
 > [!NOTE]
 > Remember that `--model_name` value can be updated.
 Please, check the available models in [model_list.yaml](models/model_list.yaml).
-
-> [!IMPORTANT]
-> If you are using another container at the same time, remember to launch the server in your **local environment**.
 
 2. Set the parameters inside [tts.launch](launch/tts.lach.launch) and select the functions to be used.
     ```xml
@@ -177,14 +175,12 @@ Don't forget to give the project a star! Thanks again!
 <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
-
 <!-- LICENSE -->
 <!-- ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
-
 
 
 <!-- ACKNOWLEDGMENTS -->
