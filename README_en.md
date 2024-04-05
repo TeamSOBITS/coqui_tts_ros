@@ -8,7 +8,7 @@
 [![Issues][issues-shield]][issues-url]
 <!-- [![MIT License][license-shield]][license-url] -->
 
-# Coqui TTS ROS
+# Coqui TTS for ROS
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -75,7 +75,7 @@ First, please set up the following environment before proceeding to the next ins
     ```
 2. Navigate into the repository.
     ```sh
-    $ cd coqui_tts/
+    $ cd coqui_tts_ros/
     ```
 3. Install the dependent packages.
     ```sh
@@ -198,13 +198,13 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/TeamSOBITS/coqui_tts.svg?style=for-the-badge
-[contributors-url]: https://github.com/TeamSOBITS/coqui_tts/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/TeamSOBITS/coqui_tts.svg?style=for-the-badge
-[forks-url]: https://github.com/TeamSOBITS/coqui_tts/network/members
-[stars-shield]: https://img.shields.io/github/stars/TeamSOBITS/coqui_tts.svg?style=for-the-badge
-[stars-url]: https://github.com/TeamSOBITS/coqui_tts/stargazers
-[issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/coqui_tts.svg?style=for-the-badge
-[issues-url]: https://github.com/TeamSOBITS/coqui_tts/issues
-<!-- [license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts.svg?style=for-the-badge -->
+[contributors-shield]: https://img.shields.io/github/contributors/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
+[contributors-url]: https://github.com/TeamSOBITS/coqui_tts_ros/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
+[forks-url]: https://github.com/TeamSOBITS/coqui_tts_ros/network/members
+[stars-shield]: https://img.shields.io/github/stars/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
+[stars-url]: https://github.com/TeamSOBITS/coqui_tts_ros/stargazers
+[issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
+[issues-url]: https://github.com/TeamSOBITS/coqui_tts_ros/issues
+<!-- [license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge -->
 [license-url]: LICENSE.txt
