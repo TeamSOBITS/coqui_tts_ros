@@ -63,28 +63,45 @@ First, please set up the following environment before proceeding to the next ins
 | CUDA | >=11.8 (If GPU is used) |
 
 > [!NOTE]
-> If you need to install `Ubuntu` or `ROS`, please check our [SOBITS Manual](https://github.com/TeamSOBITS/sobits_manual#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6).
+> [Docker](https://docs.docker.com/engine/install/ubuntu/) is required to use this TTS library.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Installation
 
 1. Clone this repository.
-   ```sh
-   $ git clone https://github.com/TeamSOBITS/coqui_tts
-   ```
+    ```sh
+    $ git clone https://github.com/TeamSOBITS/coqui_tts_ros
+    ```
 2. Navigate into the repository.
-   ```sh
-   $ cd coqui_tts/
-   ```
-4. Build image.
-   ```sh
-   $ bash build.sh
-   ```
-5. Create container.
-   ```sh
-   $ bash run.sh
-   ```
+    ```sh
+    $ cd coqui_tts/
+    ```
+3. Install the dependent packages.
+    ```sh
+    $ bash install.sh
+    ```
+4. Compile the package.
+    ```sh
+    $ roscd
+    # Or just use "cd ~/catkin_ws/" and change directory.
+    $ catkin_make
+    ```
+
+5. Create a simple alias to launch the TTS server.
+    - If using **CPU**:
+    ```sh
+    $ echo "alias tts_launch='docker run --rm -it -p 5002:5002 -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts-cpu'" >> ~/.bash_alias
+    ```
+    - If using **GPU**:
+    ```sh
+    $ echo "alias tts_launch='docker run --rm -it -p 5002:5002 --gpus all -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts'" >> ~/.bash_alias
+    ```
+> [!IMPORTANT]
+> `{PATH_ROS_WS_LOCAL}` needs to be updated to your ROS PATH in the **local environment**.
+
+> [!IMPORTANT]
+> You need to run the command 5. in the **local environment**.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -92,57 +109,55 @@ First, please set up the following environment before proceeding to the next ins
 <!-- LAUNCH AND USAGE -->
 ## Launch and Usage
 
-<!-- It would be useful to add demo examples and screenshots about the nominal state of the program -->
-Use this space to show how to launch and use the project.
+1. Launch TTS server from the **local environment**.
+    - If using **CPU**:
+    ```sh
+    $ tts_launch --model_name tts_models/en/vctk/vits
+    ```
+    - If using **GPU**:
+    ```sh
+    $ tts_launch --model_name tts_models/en/vctk/vits --use_cuda true
+    ```
+> [!NOTE]
+> Remember that `--model_name` value can be updated.
+Please, check the available models in [model_list.yaml](models/model_list.yaml).
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/TeamSOBITS/coqui_tts.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+> [!IMPORTANT]
+> If you are using another container at the same time, remember to launch the server in your **local environment**.
 
+2. Set the parameters inside [tts.launch](launch/tts.lach.launch) and select the functions to be used.
+    ```xml
+    <!-- Set Coqui TTS server url -->
+    <arg name="url"         default="http://localhost:5002"/>
+    <!-- Add period at the end of a sentence (true) -->
+    <arg name="addStopChar" default="true"/>
+    <!-- Set result sound filename -->
+    <arg name="filename"    default="output.wav"/>
+    <!-- Set input style_wav if sample voice is given -->
+    <arg name="style_wav"   default=""/>
+    <!-- Set Speaker ID if multi-speaker model is being used -->
+    <arg name="speaker_id"  default="p225"/>
+    <!-- Set Language if multi-language model is being used -->
+    <arg name="language_id" default=""/>
+    ```
+
+3. Execute the launch file [tts.launch](launch/tts.launch).
+    ```sh
+    $ roslaunch coqui_tts_ros tts.launch
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- MILESTONE -->
 ## Milestone
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Choose `--model_name` value through parameter.
+- [ ] Make available the funtion of `style_wav`.
 
 See the [open issues](issues-url) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CHANGE-LOG -->
-## Change-Log
-
-- 2.0: Explanatory Title
-  - In-detail 1
-  - In-detail 2
-  - In-detail 3
-- 1.1: Explanatory Title
-  - In-detail 1
-  - In-detail 2
-  - In-detail 3
-- 1.0: Explanatory Title
-  - In-detail 1
-  - In-detail 2
-  - In-detail 3
 
 
 <!-- CONTRIBUTING -->
@@ -175,12 +190,10 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* [coqui-ai/TTS](https://github.com/coqui-ai/TTS)
+* [coqui-ai/TTS Docker images](https://docs.coqui.ai/en/latest/docker_images.html)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
