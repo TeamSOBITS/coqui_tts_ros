@@ -2,14 +2,12 @@
 
 echo "╔══╣ Install: coqui_tts_ros (STARTING) ╠══╗"
 
-DIR="$(pwd)"
-cd ..
-git clone https://github.com/TeamSOBITS/coqui_tts
-cd coqui_tts
-bash install.sh
-cd $DIR
+sudo apt-get update -y 
+sudo apt install alsa-base
 
 python3 -m pip install -U pip
-python3 -m pip install requests
+python3 -m pip install \
+    requests \
+    wave
 
 echo "╚══╣ Install: coqui_tts_ros (FINISHED) ╠══╝"
