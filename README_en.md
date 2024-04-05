@@ -137,6 +137,8 @@ Please, check the available models in [model_list.yaml](models/model_list.yaml).
     <arg name="speaker_id"  default="p225"/>
     <!-- Set Language if multi-language model is being used -->
     <arg name="language_id" default=""/>
+    <!-- Set sound_audio to true if you want to play the sound -->
+    <arg name="sound_audio" default="true"/>
     ```
 
 3. Execute the launch file [tts.launch](launch/tts.launch).

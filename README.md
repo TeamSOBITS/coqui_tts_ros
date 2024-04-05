@@ -140,6 +140,8 @@
     <arg name="speaker_id"  default="p225"/>
     <!-- Set Language if multi-language model is being used -->
     <arg name="language_id" default=""/>
+    <!-- Set sound_audio to true if you want to play the sound -->
+    <arg name="sound_audio" default="true"/>
     ```
 
 3. [tts.launch](launch/tts.launch)というlaunchファイルを実行する．
@@ -153,7 +155,7 @@
 <!-- マイルストーン -->
 ## マイルストーン
 
-- [x] `--model_name` をパラメータとして設定できるようにする．
+- [ ] `--model_name` をパラメータとして設定できるようにする．
 - [ ] `style_wav` の機能を導入する．
 
 現時点のバッグや新規機能の依頼を確認するために[Issueページ](issues-url) をご覧ください．
