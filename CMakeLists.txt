@@ -1,31 +1,30 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.8)
 project(coqui_tts_ros)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  rospy
-  sobits_msgs
-)
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(sobits_msgs REQUIRED)
 
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES coqui_tts_ros
-#  CATKIN_DEPENDS rospy sobits_msgs
-#  DEPENDS system_lib
-)
-
-###########
-## Build ##
-###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
+# Include directories
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+  ${rclpy_INCLUDE_DIRS}
+  ${sobits_msgs_INCLUDE_DIRS}
 )
+
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+
+# Install scripts
+install(PROGRAMS
+  coqui_tts_ros/tts.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Package
+ament_package()
