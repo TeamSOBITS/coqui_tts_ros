@@ -43,7 +43,7 @@ def generate_launch_description():
 
         Node(
             package='coqui_tts_ros',
-            executable='tts',
+            executable='tts_action',
             name='coqui_tts_ros',
             output='screen',
             parameters=[{
@@ -52,6 +52,8 @@ def generate_launch_description():
                 'filename': LaunchConfiguration('filename'),
                 'speaker_id': LaunchConfiguration('speaker_id'),
                 'language_id': LaunchConfiguration('language_id'),
+                'style_wav': LaunchConfiguration('style_wav'),
+                'sound_audio': LaunchConfiguration('sound_audio'),
             }]
         )
     ])

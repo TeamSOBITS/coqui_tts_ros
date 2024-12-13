@@ -70,13 +70,13 @@
 
 1. ROSの`src`フォルダに移動します．
    ```sh
-   $ roscd
-   # もしくは，"cd ~/catkin_ws/"へ移動．
+   $ ros2_cd
+   # もしくは，"cd ~/colcon_ws/"へ移動．
    $ cd src/
    ```
 2. 本レポジトリをcloneします．
    ```sh
-   $ git clone https://github.com/TeamSOBITS/coqui_tts_ros
+   $ git clone -b feature/humble-devel https://github.com/TeamSOBITS/coqui_tts_ros
    ```
 3. レポジトリの中へ移動します．
    ```sh
@@ -88,9 +88,9 @@
    ```
 5. パッケージをコンパイルします．
    ```sh
-   $ roscd
-   # もしくは，"cd ~/catkin_ws/"へ移動．
-   $ catkin_make
+   $ ros2_cd
+   # もしくは，"cd ~/colcon_ws/"へ移動．
+   $ colcon build
    ```
 6. TTSサーバーを簡単に実行するために， `alias` を作成する.
     - **CPUのみ**の場合:

@@ -10,7 +10,7 @@ import wave
 import os
 import time
 
-from sobits_msgs.srv import TextToSpeech
+from sobits_interfaces.srv import TextToSpeech
 
 
 class CoquiTTSNode(Node):

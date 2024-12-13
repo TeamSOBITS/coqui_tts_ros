@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             "tts = coqui_tts_ros.tts:main",
+            "tts_action = coqui_tts_ros.tts_action:main",
         ],
     },
 )
