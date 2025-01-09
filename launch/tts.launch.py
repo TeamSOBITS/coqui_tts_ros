@@ -15,11 +15,11 @@ def generate_launch_description():
             default_value='true',
             description='Add period at the end of a sentence'
         ),
-        DeclareLaunchArgument(
-            'filename',
-            default_value='output.wav',
-            description='Set result sound filename'
-        ),
+        # DeclareLaunchArgument(
+        #     'filename',
+        #     default_value='output.wav',
+        #     description='Set result sound filename'
+        # ),
         DeclareLaunchArgument(
             'style_wav',
             default_value='',
@@ -43,13 +43,13 @@ def generate_launch_description():
 
         Node(
             package='coqui_tts_ros',
-            executable='tts_action',
-            name='coqui_tts_ros',
+            executable='tts',
+            name='tts',
             output='screen',
             parameters=[{
                 'url': LaunchConfiguration('url'),
                 'addStopChar': LaunchConfiguration('addStopChar'),
-                'filename': LaunchConfiguration('filename'),
+                # 'filename': LaunchConfiguration('filename'),
                 'speaker_id': LaunchConfiguration('speaker_id'),
                 'language_id': LaunchConfiguration('language_id'),
                 'style_wav': LaunchConfiguration('style_wav'),
@@ -57,3 +57,6 @@ def generate_launch_description():
             }]
         )
     ])
+
+## こんにちは。この文章はとても長いため、途中でキャンセルすることを推奨します。これはROS2のActionlib通信をしているため、途中で音を止めることができるのです。
+## Hello. This text is very long and we recommend to cancel it in the middle. This is because of the Actionlib communication in ROS2, which allows us to stop the sound in the middle.

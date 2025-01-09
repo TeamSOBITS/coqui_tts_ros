@@ -3,27 +3,26 @@
 
 import rclpy
 from rclpy.node import Node
-import subprocess
+import pygame
 import requests
 import codecs
 import wave
 import os
 import time
+from ament_index_python.packages import get_package_share_directory
+from rclpy.action import ActionServer, GoalResponse, CancelResponse
 
-from sobits_interfaces.srv import TextToSpeech
-
+from sobits_interfaces.action import TextToSpeech
 
 class CoquiTTSNode(Node):
     def __init__(self):
         super().__init__('coqui_tts_node')
 
-        # Get parameters from launcher
         self.declare_parameters(
             namespace='',
             parameters=[
                 ('url', 'http://localhost:5002'),
                 ('addStopChar', True),
-                ('filename', 'output.wav'),
                 ('speaker_id', 'p225'),
                 ('language_id', ''),
                 ('style_wav', ''),
@@ -32,103 +31,126 @@ class CoquiTTSNode(Node):
 
         self.url = self.get_parameter('url').get_parameter_value().string_value
         self.addStopChar = self.get_parameter('addStopChar').get_parameter_value().bool_value
-        self.filename = self.get_parameter('filename').get_parameter_value().string_value
         self.speaker_id = self.get_parameter('speaker_id').get_parameter_value().string_value
         self.language_id = self.get_parameter('language_id').get_parameter_value().string_value
         self.style_wav = self.get_parameter('style_wav').get_parameter_value().string_value
         self.sound_audio = self.get_parameter('sound_audio').get_parameter_value().bool_value
-
-        # Get path of the package
         self.path = os.path.join(os.path.dirname(__file__), '..', 'sounds')
-        self.filename = os.path.join(self.path, self.filename)
+        self.filename = os.path.join(get_package_share_directory('coqui_tts_ros'), 'sounds', 'output.wav')
         self.style_wav = os.path.join(self.path, self.style_wav) if self.style_wav else ''
-
-        # Valid end of phrase characters
         self.VALID_END_OF_PHRASE = ['.', ';', '!', '?']
 
-        self.get_logger().info("Coqui TTS node has been initialized.")
-        self.get_logger().info(f"Server URL: {self.url}")
-        self.get_logger().info(f"Add stop character: {self.addStopChar}")
-        self.get_logger().info(f"Output filename: {self.filename}")
-        self.get_logger().info(f"Speaker id: {self.speaker_id}")
-        self.get_logger().info(f"Language id: {self.language_id}")
-        self.get_logger().info(f"Style wav: {self.style_wav}")
-        self.get_logger().info(f"Sound audio: {self.sound_audio}")
+        self.action_server = ActionServer(
+            self, TextToSpeech, 'tts',
+            execute_callback=self.execute_callback,
+            goal_callback=self.goal_callback,
+            cancel_callback=self.cancel_callback)
 
-        # Create service
-        self.srv = self.create_service(TextToSpeech, 'tts', self.tts_request_callback)
+        self.get_logger().info('Action Server is ready...')
 
-    # Service callback
-    def tts_request_callback(self, request, response):
-        text = request.text
+    def goal_callback(self, goal_request):
+        self.get_logger().info("Received goal request")
+        return GoalResponse.ACCEPT
+
+    def cancel_callback(self, goal_handle):
+        self.get_logger().info("Received cancel request")
+        return CancelResponse.ACCEPT
+
+    def execute_callback(self, goal_handle):
+        thread_node = Node("execute_callback")
+        feedback = TextToSpeech.Feedback()
+        response = TextToSpeech.Result()
+
+        text = goal_handle.request.text
         text = codecs.decode(str(text).encode('utf-8'))
-        self.get_logger().info(f"Text to be converted to speech: {text}")
+        self.get_logger().info(f"Processing TTS request: {text}")
 
-        if self.textToSoundFile(text):
-            response.result = True
-        else:
-            response.result = False
+        response.success = False
+        response.total_time = 0.0
 
+        try:
+            if not self.textToSoundFile(text):
+                self.get_logger().error("TTS processing failed.")
+                goal_handle.abort()
+                thread_node.destroy_node()
+                del thread_node
+                return response
+
+            with wave.open(self.filename, 'r') as audio_file:
+                frame_rate = audio_file.getframerate()
+                n_frames = audio_file.getnframes()
+                duration = n_frames / float(frame_rate)
+
+            pygame.mixer.init()
+            pygame.mixer.music.load(self.filename)
+            pygame.mixer.music.play()
+
+            interval = 0.1
+            feedback.remaining_time = duration
+            while rclpy.ok():
+                if goal_handle.is_cancel_requested:
+                    self.get_logger().info('Goal canceled')
+                    if pygame.mixer.music.get_busy():
+                        pygame.mixer.music.stop()
+                    goal_handle.canceled()
+                    thread_node.destroy_node()
+                    del thread_node
+                    return response
+
+                rclpy.spin_once(thread_node, timeout_sec=0.1)
+                response.total_time += interval
+                feedback.remaining_time -= interval
+
+                if (feedback.remaining_time <= 0.0):
+                    break
+                else:
+                    goal_handle.publish_feedback(feedback)
+
+            feedback.remaining_time = 0.0
+            goal_handle.publish_feedback(feedback)
+            self.get_logger().info("TTS processing and playback completed.")
+
+            response.success = True
+            goal_handle.succeed()
+
+        except Exception as e:
+            self.get_logger().error(f"Execution error: {str(e)}")
+            goal_handle.abort()
+
+        thread_node.destroy_node()
+        del thread_node
         return response
 
-    # Add stop character if requested
     def endText(self, text):
         if self.addStopChar and text[-1] not in self.VALID_END_OF_PHRASE:
             text += "."
         return text
-    
-    def soundFileToAudio(self):
-        # Get sound file duration
-        duration = 0
-        with wave.open(self.filename, 'r') as audio_file:
-            frame_rate = audio_file.getframerate()
-            n_frames = audio_file.getnframes()
-            duration = n_frames / float(frame_rate)
 
-        # Play sound file using ffplay
-        cmd = f"ffplay -nodisp -autoexit {self.filename}"
-        subprocess.Popen(cmd, shell=True)
-
-        # Use time.sleep to wait for the audio duration
-        time.sleep(duration)
-
-    # Convert text to sound file
     def textToSoundFile(self, text):
         if len(text) == 0:
-            self.get_logger().error("No text has been specified.")
+            self.get_logger().error("No text specified.")
             return False
 
         try:
             req = requests.get(
-                f"{self.url}/api/tts", 
+                f"{self.url}/api/tts",
                 params={
                     'text': self.endText(text),
                     'speaker_id': self.speaker_id,
                     'language_id': self.language_id,
                     'style_wav': self.style_wav
                 })
-
         except Exception as e:
-            self.get_logger().error("Error calling Coqui TTS server api")
-            self.get_logger().error(str(e))
+            self.get_logger().error(f"API call error: {e}")
             return False
-        
-        if req.status_code == 200 and req.headers['Content-Type'] == 'audio/wav':
-            self.get_logger().info("Valid audio has been returned from Coqui TTS api.")
 
+        if req.status_code == 200 and req.headers['Content-Type'] == 'audio/wav':
             with open(self.filename, 'wb') as f:
                 f.write(req.content)
-
-            if self.sound_audio:
-                self.soundFileToAudio()
-
             return True
 
-        else:
-            self.get_logger().warn("No audio has been returned from Coqui TTS server api")
-
+        self.get_logger().warn("No valid audio received.")
         return False
-
 
 def main(args=None):
     rclpy.init(args=args)
@@ -136,7 +158,6 @@ def main(args=None):
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
