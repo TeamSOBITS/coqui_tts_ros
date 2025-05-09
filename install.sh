@@ -9,6 +9,7 @@ sudo apt install ffmpeg
 python3 -m pip install -U pip
 python3 -m pip install \
     requests \
-    wave
+    wave \
+    pygame
 
 echo "╚══╣ Install: coqui_tts_ros (FINISHED) ╠══╝"

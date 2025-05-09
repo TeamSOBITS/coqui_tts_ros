@@ -9,7 +9,8 @@ setup(
     version='0.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
-        (os.path.join('share', package_name), glob('launch/tts.launch.py')),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*')),
+        (os.path.join('share', package_name, 'sounds'), glob('sounds/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -17,7 +18,7 @@ setup(
     maintainer_email='sobits@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    # tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             "tts = coqui_tts_ros.tts:main",
