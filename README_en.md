@@ -128,7 +128,7 @@ First, ensure you have the following environment set up before proceeding to the
     tts_launch --model_name tts_models/en/vctk/vits --use_cuda true
     ```
 
-2.  Configure the parameters for the TTS launch file, [tts.launch.py](https://www.google.com/search?q=launch/tts.lach.launch.py).
+2.  Configure the parameters for the TTS launch file, [tts.launch.py](launch/tts.launch.py).
 
     ```python
     DeclareLaunchArgument(
@@ -168,7 +168,7 @@ First, ensure you have the following environment set up before proceeding to the
         ),
     ```
 
-3.  Run the [tts.launch.py](https://www.google.com/search?q=launch/tts.launch.py) launch file.
+3.  Run the [tts.launch.py](launch/tts.launch.py) launch file.
 
     ```sh
     ros2 launch coqui_tts_ros tts.launch.py
@@ -181,7 +181,7 @@ First, ensure you have the following environment set up before proceeding to the
   - [ ] Enable setting `--model_name` as a parameter.
   - [ ] Implement the `style_wav` functionality.
 
-For current bugs or new feature requests, please check the [Issue page](https://www.google.com/search?q=issues-url).
+For current bugs or new feature requests, please check the [Issue page](issues-url).
 
 <p align="right">(<a href="#readme-top">to top</a>)</p>
 
@@ -203,4 +203,4 @@ For current bugs or new feature requests, please check the [Issue page](https://
 [issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
 [issues-url]: https://github.com/TeamSOBITS/coqui_tts_ros/issues
 [license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
-[license-url]: LICENSE.txt
+[license-url]: LICENSE

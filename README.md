@@ -125,7 +125,7 @@
     tts_launch --model_name tts_models/en/vctk/vits --use_cuda true
     ```
 
-2. TTSの起動する機能をパラメタとし [tts.launch.py](launch/tts.lach.launch.py)に設定する．
+2. TTSの起動する機能をパラメタとし [tts.launch.py](launch/tts.launch.py)に設定する．
     ```python
     DeclareLaunchArgument(
             'url',
@@ -168,6 +168,8 @@
     ```sh
     ros2 launch coqui_tts_ros tts.launch.py
     ```
+</details>
+
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -203,4 +205,4 @@
 [issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
 [issues-url]: https://github.com/TeamSOBITS/coqui_tts_ros/issues
 [license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
-[license-url]: LICENSE.txt
+[license-url]: LICENSE
