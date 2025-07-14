@@ -1,198 +1,196 @@
 <a name="readme-top"></a>
 
-[JP](README.md) | [EN](README_en.md)
+[JA](README.md) | [EN](README_en.md)
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-<!-- [![MIT License][license-shield]][license-url] -->
+[![License][license-shield]][license-url]
+
 
 # Coqui TTS for ROS
 
-<!-- TABLE OF CONTENTS -->
 <details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#introduction">Introduction</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#launch-and-usage">Launch and Usage</a></li>
-    <li><a href="#milestone">Milestone</a></li>
-    <!-- <li><a href="#contributing">Contributing</a></li> -->
-    <!-- <li><a href="#license">License</a></li> -->
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
+<summary>Table of Contents</summary>
+<ol>
+<li>
+<a href="#introduction">Introduction</a>
+</li>
+<li>
+<a href="#getting-started">Getting Started</a>
+<ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#installation">Installation</a></li>
+</ul>
+</li>
+<li><a href="#launch-and-usage">Launch and Usage</a></li>
+<li><a href="#milestones">Milestones</a></li>
+<li><a href="#references">References</a></li>
+</ol>
 </details>
 
-
-<!-- INTRODUCTION -->
 ## Introduction
 
-This repository allows the connection of [coqui-ai/TTS](https://github.com/coqui-ai/TTS) with ROS, providing a real-time advanced Text-to-Speech generation.
-The latest `TTSv2` provides of 16 languages and better performance overall.
+This repository enables the connection of [coqui-ai/TTS](https://github.com/coqui-ai/TTS) with ROS2 to provide real-time, advanced speech synthesis.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-<!-- GETTING STARTED -->
 ## Getting Started
 
-This section describes how to set up this repository.
+This section provides instructions on how to set up this repository.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Prerequisites
 
-First, please set up the following environment before proceeding to the next installation stage.
+First, ensure you have the following environment set up before proceeding to the installation step.
 
 | System  | Version |
 | --- | --- |
-| Ubuntu | 20.04 (Focal Fossa) - Local Env. |
-| Python | >= 3.9, < 3.12 |
-| Docker Engine | Tested on 26.0.0 |
-| CUDA | >=11.8 (If GPU is used) |
+| Ubuntu | 22.04 (Jammy Jellyfish) |
+| ROS | Humble Hawksbill |
+| Python | 3.10 |
+| Docker Engine | 26.0.0 (Tested) |
+| CUDA | >=11.8 (for GPU usage) |
 
 > [!NOTE]
-> [Docker](https://docs.docker.com/engine/install/ubuntu/) is required to use this TTS library.
+> This repository requires [Docker](https://docs.docker.com/engine/install/ubuntu/) to be installed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Installation
 
-1. Go to the `src` folder of ROS.
-   ```sh
-   $ roscd
-   # Or just use "cd ~/catkin_ws/" and change directory.
-   $ cd src/
-   ```
-2. Clone this repository.
+1.  Navigate to your ROS2 `src` folder.
     ```sh
-    $ git clone https://github.com/TeamSOBITS/coqui_tts_ros
+    cd ~/colcon_ws/src/
     ```
-3. Navigate into the repository.
+2.  Clone this repository.
     ```sh
-    $ cd coqui_tts_ros/
+    git clone -b feature/humble-devel https://github.com/TeamSOBITS/coqui_tts_ros
     ```
-4. Install the dependent packages.
+3.  Navigate into the repository.
     ```sh
-    $ bash install.sh
+    cd coqui_tts_ros/
     ```
-5. Compile the package.
+4.  Install the dependent packages.
     ```sh
-    $ roscd
-    # Or just use "cd ~/catkin_ws/" and change directory.
-    $ catkin_make
+    bash install.sh
     ```
-6. Create a simple alias to launch the TTS server.
-    - If using **CPU**:
+5.  Compile the package.
     ```sh
-    $ echo "alias tts_launch='docker run --rm -it -p 5002:5002 -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts-cpu'" >> ~/.bash_alias
+    cd ~/colcon_ws/
     ```
-    - If using **GPU**:
     ```sh
-    $ echo "alias tts_launch='docker run --rm -it -p 5002:5002 --gpus all -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts'" >> ~/.bash_alias
+    colcon build --symlink-install
     ```
-> [!IMPORTANT]
-> `{PATH_ROS_WS_LOCAL}` needs to be updated to your ROS PATH in the **local environment**.
+    ```sh
+    source ~/colcon_ws/install/setup.sh
+    ```
+6.  Create an `alias` for easily launching the TTS server.
+      - **For CPU only**:
+    <!-- end list -->
+    ```sh
+    echo "alias tts_launch='docker run --rm -it -p 5002:5002 -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts-cpu'" >> ~/.bash_alias
+    ```
+      - **For GPU**:
+    <!-- end list -->
+    ```sh
+    echo "alias tts_launch='docker run --rm -it -p 5002:5002 --gpus all -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts'" >> ~/.bash_alias
+    ```
+
+> [\!IMPORTANT]
+> `{PATH_ROS_WS_LOCAL}` is the path to your ROS workspace on your **local machine**.
 
 > [!IMPORTANT]
-> You need to run the command 6. in the **local environment**.
+> If you are already inside a Docker container, you must run step 6 on your local machine.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-<!-- LAUNCH AND USAGE -->
 ## Launch and Usage
 
-1. Launch TTS server from the **local environment**.
-    - If using **CPU**:
-    ```sh
-    $ tts_launch --model_name tts_models/en/vctk/vits
-    ```
-    - If using **GPU**:
-    ```sh
-    $ tts_launch --model_name tts_models/en/vctk/vits --use_cuda true
-    ```
-> [!NOTE]
-> Remember that `--model_name` value can be updated.
-Please, check the available models in [model_list.yaml](models/model_list.yaml).
 
-2. Set the parameters inside [tts.launch](launch/tts.lach.launch) and select the functions to be used.
-    ```xml
-    <!-- Set Coqui TTS server url -->
-    <arg name="url"         default="http://localhost:5002"/>
-    <!-- Add period at the end of a sentence (true) -->
-    <arg name="addStopChar" default="true"/>
-    <!-- Set result sound filename -->
-    <arg name="filename"    default="output.wav"/>
-    <!-- Set input style_wav if sample voice is given -->
-    <arg name="style_wav"   default=""/>
-    <!-- Set Speaker ID if multi-speaker model is being used -->
-    <arg name="speaker_id"  default="p225"/>
-    <!-- Set Language if multi-language model is being used -->
-    <arg name="language_id" default=""/>
-    <!-- Set sound_audio to true if you want to play the sound -->
-    <arg name="sound_audio" default="true"/>
+1.  Launch the TTS server on your **local machine**.
+
+      - **For CPU only**:
+
+    <!-- end list -->
+
+    ```sh
+    tts_launch --model_name tts_models/en/vctk/vits
     ```
 
-3. Execute the launch file [tts.launch](launch/tts.launch).
+      - **For GPU**:
+
+    <!-- end list -->
+
     ```sh
-    $ roslaunch coqui_tts_ros tts.launch
+    tts_launch --model_name tts_models/en/vctk/vits --use_cuda true
+    ```
+
+2.  Configure the parameters for the TTS launch file, [tts.launch.py](https://www.google.com/search?q=launch/tts.lach.launch.py).
+
+    ```python
+    DeclareLaunchArgument(
+            'url',
+            default_value='http://localhost:5002',
+            description='Set Coqui TTS server url'
+        ),
+        DeclareLaunchArgument(
+            'addStopChar',
+            default_value='true',
+            description='Add period at the end of a sentence'
+        ),
+        # DeclareLaunchArgument(
+        #     'filename',
+        #     default_value='output.wav',
+        #     description='Set result sound filename'
+        # ),
+        DeclareLaunchArgument(
+            'style_wav',
+            default_value='',
+            description='Set input style_wav if sample voice is given'
+        ),
+        DeclareLaunchArgument(
+            'speaker_id',
+            default_value='p225',
+            description='Set Speaker ID if multi-speaker model is being used'
+        ),
+        DeclareLaunchArgument(
+            'language_id',
+            default_value='',
+            description='Set Language if multi-language model is being used'
+        ),
+        DeclareLaunchArgument(
+            'sound_audio',
+            default_value='true',
+            description='Set sound_audio to true if you want to play the sound'
+        ),
+    ```
+
+3.  Run the [tts.launch.py](https://www.google.com/search?q=launch/tts.launch.py) launch file.
+
+    ```sh
+    ros2 launch coqui_tts_ros tts.launch.py
     ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Milestones
 
-<!-- MILESTONE -->
-## Milestone
+  - [ ] Enable setting `--model_name` as a parameter.
+  - [ ] Implement the `style_wav` functionality.
 
-- [ ] Choose `--model_name` value through parameter.
-- [ ] Make available the funtion of `style_wav`.
+For current bugs or new feature requests, please check the [Issue page](https://www.google.com/search?q=issues-url).
 
-See the [open issues](issues-url) for a full list of proposed features (and known issues).
+<p align="right">(<a href="#readme-top">to top</a>)</p>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## References
 
-
-<!-- CONTRIBUTING -->
-<!-- ## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
-
-
-<!-- LICENSE -->
-<!-- ## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* [coqui-ai/TTS](https://github.com/coqui-ai/TTS)
-* [coqui-ai/TTS Docker images](https://docs.coqui.ai/en/latest/docker_images.html)
+  * [coqui-ai/TTS](https://github.com/coqui-ai/TTS)
+  * [coqui-ai/TTS Docker images](https://docs.coqui.ai/en/latest/docker_images.html)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -204,5 +202,5 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [stars-url]: https://github.com/TeamSOBITS/coqui_tts_ros/stargazers
 [issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
 [issues-url]: https://github.com/TeamSOBITS/coqui_tts_ros/issues
-<!-- [license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge -->
+[license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
 [license-url]: LICENSE.txt

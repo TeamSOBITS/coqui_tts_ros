@@ -1,12 +1,12 @@
 <a name="readme-top"></a>
 
-[JP](README.md) | [EN](README_en.md)
+[JA](README.md) | [EN](README_en.md)
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-<!-- [![MIT License][license-shield]][license-url] -->
+[![License][license-shield]][license-url]
 
 # Coqui TTS for ROS
 
@@ -18,7 +18,7 @@
       <a href="#概要">概要</a>
     </li>
     <li>
-      <a href="#環境構築">環境構築</a>
+      <a href="#セットアップ">セットアップ</a>
       <ul>
         <li><a href="#環境条件">環境条件</a></li>
         <li><a href="#インストール方法">インストール方法</a></li>
@@ -37,8 +37,7 @@
 <!-- 概要 -->
 ## 概要
 
-本リポジトリは[coqui-ai/TTS](https://github.com/coqui-ai/TTS)とROSの接続を可能にし，リアルタイムの高度な音声合成を提供する．
-最新の `TTSv2` は16ヶ国語に対応し，全体的にパフォーマンスが向上している．
+本リポジトリは[coqui-ai/TTS](https://github.com/coqui-ai/TTS)とROS2の接続を可能にし，リアルタイムの高度な音声合成を提供する．
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
 
@@ -56,8 +55,9 @@
 
 | System  | Version |
 | --- | --- |
-| Ubuntu | 20.04 (Focal Fossa) - Local Env. |
-| Python | >= 3.9, < 3.12 |
+| Ubuntu | 22.04 (Jammy Jellyfish) |
+| ROS | Humble Hawksbill |
+| Python | 3.10 |
 | Docker Engine | 26.0.0 (動作確認済) |
 | CUDA | >=11.8 (GPU使用の場合) |
 
@@ -68,38 +68,40 @@
 
 ### インストール方法
 
-1. ROSの`src`フォルダに移動します．
+1. ROS2の`src`フォルダに移動します．
    ```sh
-   $ ros2_cd
-   # もしくは，"cd ~/colcon_ws/"へ移動．
-   $ cd src/
+   cd ~/colcon_ws/src/
    ```
 2. 本レポジトリをcloneします．
    ```sh
-   $ git clone -b feature/humble-devel https://github.com/TeamSOBITS/coqui_tts_ros
+   git clone -b feature/humble-devel https://github.com/TeamSOBITS/coqui_tts_ros
    ```
 3. レポジトリの中へ移動します．
    ```sh
-   $ cd coqui_tts_ros/
+   cd coqui_tts_ros/
    ```
 4. 依存パッケージをインストールします．
    ```sh
-   $ bash install.sh
+   bash install.sh
    ```
 5. パッケージをコンパイルします．
    ```sh
-   $ ros2_cd
-   # もしくは，"cd ~/colcon_ws/"へ移動．
-   $ colcon build
+   cd ~/colcon_ws/
+   ```
+   ```sh
+   colcon build --symlink-install
+   ```
+   ```sh
+   source ~/colcon_ws/install/setup.sh
    ```
 6. TTSサーバーを簡単に実行するために， `alias` を作成する.
     - **CPUのみ**の場合:
     ```sh
-    $ echo "alias tts_launch='docker run --rm -it -p 5002:5002 -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts-cpu'" >> ~/.bash_alias
+    echo "alias tts_launch='docker run --rm -it -p 5002:5002 -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts-cpu'" >> ~/.bash_alias
     ```
     - **GPU**の場合:
     ```sh
-    $ echo "alias tts_launch='docker run --rm -it -p 5002:5002 --gpus all -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts'" >> ~/.bash_alias
+    echo "alias tts_launch='docker run --rm -it -p 5002:5002 --gpus all -v ~/{PATH_ROS_WS_LOCAL}/src/coqui_tts_ros/models/:/root/.local/share/tts/ --entrypoint \"tts-server\" ghcr.io/coqui-ai/tts'" >> ~/.bash_alias
     ```
 > [!IMPORTANT]
 > `{PATH_ROS_WS_LOCAL}` は**ローカル環境**に存在するROSのワークスペースのPATHである．
@@ -116,37 +118,55 @@
 1. **ローカル環境**上でTTSサーバーを立ち上げる．
     - **CPUのみ**の場合:
     ```sh
-    $ tts_launch --model_name tts_models/en/vctk/vits
+    tts_launch --model_name tts_models/en/vctk/vits
     ```
     - **GPU**の場合:
     ```sh
-    $ tts_launch --model_name tts_models/en/vctk/vits --use_cuda true
-    ```
-> [!NOTE]
-> `--model_name` を更新することが可能です.
-そのために[model_list.yaml](models/model_list.yaml)を参照してください．
-
-2. TTSの起動する機能をパラメタとし [tts.launch](launch/tts.lach.launch)に設定する．
-    ```xml
-    <!-- Set Coqui TTS server url -->
-    <arg name="url"         default="http://localhost:5002"/>
-    <!-- Add period at the end of a sentence (true) -->
-    <arg name="addStopChar" default="true"/>
-    <!-- Set result sound filename -->
-    <arg name="filename"    default="output.wav"/>
-    <!-- Set input style_wav if sample voice is given -->
-    <arg name="style_wav"   default=""/>
-    <!-- Set Speaker ID if multi-speaker model is being used -->
-    <arg name="speaker_id"  default="p225"/>
-    <!-- Set Language if multi-language model is being used -->
-    <arg name="language_id" default=""/>
-    <!-- Set sound_audio to true if you want to play the sound -->
-    <arg name="sound_audio" default="true"/>
+    tts_launch --model_name tts_models/en/vctk/vits --use_cuda true
     ```
 
-3. [tts.launch](launch/tts.launch)というlaunchファイルを実行する．
+2. TTSの起動する機能をパラメタとし [tts.launch.py](launch/tts.lach.launch.py)に設定する．
+    ```python
+    DeclareLaunchArgument(
+            'url',
+            default_value='http://localhost:5002',
+            description='Set Coqui TTS server url'
+        ),
+        DeclareLaunchArgument(
+            'addStopChar',
+            default_value='true',
+            description='Add period at the end of a sentence'
+        ),
+        # DeclareLaunchArgument(
+        #     'filename',
+        #     default_value='output.wav',
+        #     description='Set result sound filename'
+        # ),
+        DeclareLaunchArgument(
+            'style_wav',
+            default_value='',
+            description='Set input style_wav if sample voice is given'
+        ),
+        DeclareLaunchArgument(
+            'speaker_id',
+            default_value='p225',
+            description='Set Speaker ID if multi-speaker model is being used'
+        ),
+        DeclareLaunchArgument(
+            'language_id',
+            default_value='',
+            description='Set Language if multi-language model is being used'
+        ),
+        DeclareLaunchArgument(
+            'sound_audio',
+            default_value='true',
+            description='Set sound_audio to true if you want to play the sound'
+        ),
+    ```
+
+3. [tts.launch.py](launch/tts.launch.py)というlaunchファイルを実行する．
     ```sh
-    $ roslaunch coqui_tts_ros tts.launch
+    ros2 launch coqui_tts_ros tts.launch.py
     ```
 
 <p align="right">(<a href="#readme-top">上に戻る</a>)</p>
@@ -161,31 +181,6 @@
 現時点のバッグや新規機能の依頼を確認するために[Issueページ](issues-url) をご覧ください．
 
 <p align="right">(<a href="#readme-top">上に</a>)</p>
-
-
-<!-- CONTRIBUTING -->
-<!-- ## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p> -->
-
-
-<!-- LICENSE -->
-<!-- ## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">上に戻る</a>)</p> -->
 
 
 <!-- 参考文献 -->
@@ -207,5 +202,5 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [stars-url]: https://github.com/TeamSOBITS/coqui_tts_ros/stargazers
 [issues-shield]: https://img.shields.io/github/issues/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
 [issues-url]: https://github.com/TeamSOBITS/coqui_tts_ros/issues
-<!-- [license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge -->
+[license-shield]: https://img.shields.io/github/license/TeamSOBITS/coqui_tts_ros.svg?style=for-the-badge
 [license-url]: LICENSE.txt
