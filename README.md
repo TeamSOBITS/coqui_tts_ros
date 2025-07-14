@@ -180,7 +180,7 @@
 - [ ] `--model_name` をパラメータとして設定できるようにする．
 - [ ] `style_wav` の機能を導入する．
 
-現時点のバッグや新規機能の依頼を確認するために[Issueページ](issues-url) をご覧ください．
+現時点のバッグや新規機能の依頼を確認するために[Issueページ](https://github.com/TeamSOBITS/coqui_tts_ros/issues) をご覧ください．
 
 <p align="right">(<a href="#readme-top">上に</a>)</p>
 

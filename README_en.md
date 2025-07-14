@@ -181,7 +181,7 @@ First, ensure you have the following environment set up before proceeding to the
   - [ ] Enable setting `--model_name` as a parameter.
   - [ ] Implement the `style_wav` functionality.
 
-For current bugs or new feature requests, please check the [Issue page](issues-url).
+For current bugs or new feature requests, please check the [Issue page](https://github.com/TeamSOBITS/coqui_tts_ros/issues).
 
 <p align="right">(<a href="#readme-top">to top</a>)</p>
 
